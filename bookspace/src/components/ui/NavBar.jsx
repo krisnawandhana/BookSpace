@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
+  const { logout, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
@@ -22,7 +24,14 @@ const Navbar = () => {
             <Link href="#device" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Favorites</Link>
             <Link href="#aboutus" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Categories</Link>
             <button className="px-4 py-2 hover:bg-blue-500 rounded-lg" onClick={() => setDark(!dark)}>{dark ? "🌞" : "🌙"}</button>
-            <Link href="/login" className="text-black hover:bg-blue-500 hover:text-white transition-all duration-200 px-4 py-2 rounded">Login</Link>
+            {isAuthenticated && (
+              <button
+                onClick={logout}
+                className="text-black hover:bg-red-500 hover:text-white transition-all duration-200 px-4 py-2 rounded"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </div>
