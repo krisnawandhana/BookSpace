@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/components/providers/AuthProvider";
 import Image from "next/image";
 
 const Navbar = () => {
-  const { logout, isAuthenticated } = useAuth();
+  const { isAuthenticated, logout, ready } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
-  if (!isAuthenticated) return null;
+  if (!ready) return null;     // hindari flicker saat initial load
+  if (!isAuthenticated) return null; // sembunyikan Navbar sebelum login
 
   return (
     <nav className="bg-[#FFFFFF] sticky top-0 z-50 shadow-md">

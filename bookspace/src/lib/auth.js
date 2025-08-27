@@ -1,6 +1,9 @@
+import "server-only";
+
+import { randomUUID } from "crypto";
+
 const DUMMY_EMAIL = process.env.DUMMY_EMAIL;
 const DUMMY_PASSWORD = process.env.DUMMY_PASSWORD;
-const DUMMY_TOKEN = process.env.DUMMY_TOKEN;
 
 function normalize(email) {
   return String(email || "").trim().toLowerCase();
@@ -12,6 +15,11 @@ const users = [
     ? [{ id: 1, email: normalize(DUMMY_EMAIL), password: DUMMY_PASSWORD }]
     : []),
 ];
+
+function makeToken() {
+  // token dummy unik per login; untuk real app ganti JWT
+  return `dummy.${randomUUID()}`;
+}
 
 let nextId = users.length + 1;
 
@@ -38,6 +46,6 @@ export function authenticateUser(email, password) {
   const match = users.find((u) => u.email === e && u.password === password);
   if (!match) return { error: "Email atau password salah" };
 
-  const token = DUMMY_TOKEN
+  const token = makeToken();
   return { user: { id: match.id, email: match.email }, token };
 }
