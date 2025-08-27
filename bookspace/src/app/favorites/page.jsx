@@ -23,7 +23,7 @@ export default function FavoritesPage() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <main className="max-w-7xl mx-auto p-6">
+      <main className="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-end mb-4">
           {items.length > 0 && (
             <button
