@@ -8,8 +8,8 @@ function normalize(email) {
 
 const users = [
   // seed dari env (opsional)
-  ...(process.env.DUMMY_EMAIL && process.env.DUMMY_PASSWORD
-    ? [{ id: 1, email: normalize(process.env.DUMMY_EMAIL), password: process.env.DUMMY_PASSWORD }]
+  ...(DUMMY_EMAIL && DUMMY_PASSWORD
+    ? [{ id: 1, email: normalize(DUMMY_EMAIL), password: DUMMY_PASSWORD }]
     : []),
 ];
 

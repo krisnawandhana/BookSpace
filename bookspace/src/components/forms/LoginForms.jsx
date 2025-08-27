@@ -32,7 +32,7 @@ export default function LoginForm() {
       if (!res.ok) throw new Error(data?.message || "Login gagal");
       login(data.user, data.token);
     } catch (e2) {
-      setErr(e2.message);
+      setErrors((prev) => ({ ...prev, general: e2.message }));
     } finally {
       setLoading(false);
     }
