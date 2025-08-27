@@ -19,6 +19,7 @@ export function useAuth() {
     localStorage.setItem("token", token);
     setUser(user);
     router.push("/dashboard");
+    router.refresh();
   };
 
   const logout = () => {
