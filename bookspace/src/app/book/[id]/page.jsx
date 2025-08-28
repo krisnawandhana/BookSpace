@@ -62,7 +62,7 @@ export default function BookDetailPage() {
   return (
     <div className="bg-white ">
       <Navbar />
-      <main className="max-w-4xl mx-auto p-6 min-h-screen">
+      <main className="max-w-7xl mx-auto p-6 min-h-screen">
         <button
           onClick={() => router.back()}
           className="text-sm text-blue-600 hover:underline mb-4"
