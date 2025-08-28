@@ -26,7 +26,7 @@ const Navbar = () => {
           <div className="hidden md:flex space-x-4 font-bold mx-4">
             <Link href="/" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Dashboard</Link>
             <Link href="/favorites" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Favorites</Link>
-            <Link href="/categories" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Categories</Link>
+            <Link href="/category" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Categories</Link>
             <button className="px-4 py-2 hover:bg-blue-500 rounded-lg" onClick={() => setDark(!dark)}>{dark ? "🌞" : "🌙"}</button>
             {isAuthenticated && (
               <button
@@ -45,7 +45,7 @@ const Navbar = () => {
         <div className="md:hidden bg-white shadow-md">
             <Link href="/" className="text-white hover:text-blue-700">Dashboard</Link>
             <Link href="/favorites" className="text-white hover:text-blue-700">Favorites</Link>
-            <Link href="/categories" className="text-white hover:text-blue-700">Categories</Link>
+            <Link href="/category" className="text-white hover:text-blue-700">Categories</Link>
         </div>
       )}
     </nav>
