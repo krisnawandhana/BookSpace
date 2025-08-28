@@ -7,8 +7,8 @@ export async function generateStaticParams() {
   return listCategories().map((c) => ({ slug: c.slug }));
 }
 
-export default async function CategoryDetailPage(props) {
-  const slug = await decodeURIComponent(props.slug || "").toLowerCase();
+export default async function CategoryDetailPage({params}) {
+  const slug = decodeURIComponent(params.slug || "").toLowerCase();
 
   const categories = listCategories();
   const current = categories.find((c) => c.slug === slug);
