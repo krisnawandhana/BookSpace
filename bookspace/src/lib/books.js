@@ -13,12 +13,16 @@ export function listCategories() {
 }
 
 export function queryBooks({ q = "", category } = {}) {
-  const qq = q.toLowerCase();
-  const cc = category?.toLowerCase();
+  const normalizedQuery = q.toLowerCase();
+
+  const normalizedCategory = category?.toLowerCase();
+
   const items = books.filter(b => {
-    const okQ = !qq || b.title.toLowerCase().includes(qq);
-    const okC = !cc || b.category.toLowerCase() === cc;
-    return okQ && okC;
+    const matchesQuery  = !normalizedQuery || b.title.toLowerCase().includes(normalizedQuery);
+    const matchesCategory  = !normalizedCategory || b.category.toLowerCase() === normalizedCategory;
+
+    return matchesQuery  && matchesCategory ;
   });
+  
   return { items };
 }

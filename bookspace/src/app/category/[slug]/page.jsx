@@ -7,8 +7,8 @@ export async function generateStaticParams() {
   return listCategories().map((c) => ({ slug: c.slug }));
 }
 
-export default async function CategoryDetailPage({ params }) {
-  const slug = decodeURIComponent(params.slug || "").toLowerCase();
+export default async function CategoryDetailPage(props) {
+  const slug = await decodeURIComponent(props.slug || "").toLowerCase();
 
   const categories = listCategories();
   const current = categories.find((c) => c.slug === slug);
@@ -30,7 +30,7 @@ export default async function CategoryDetailPage({ params }) {
             Belum ada buku pada kategori ini.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
             {items.map((b) => <BookCard key={b.id} book={b} />)}
           </div>
         )}
