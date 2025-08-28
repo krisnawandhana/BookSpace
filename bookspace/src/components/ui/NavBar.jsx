@@ -10,8 +10,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
-  if (!ready) return null;     // hindari flicker saat initial load
-  if (!isAuthenticated) return null; // sembunyikan Navbar sebelum login
+  if (!ready) return null; 
+  if (!isAuthenticated) return null; 
+
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <nav className="bg-[#FFFFFF] sticky top-0 z-50 shadow-md">
@@ -24,28 +26,47 @@ const Navbar = () => {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-4 font-bold mx-4">
-            <Link href="/" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Dashboard</Link>
-            <Link href="/favorites" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Favorites</Link>
-            <Link href="/categories" className="text-black hover:bg-blue-500 hover:text-stone-100 rounded-lg px-4 py-2 transition-all duration-300">Categories</Link>
+            <Link href="/" className="text-black hover:text-blue-500  rounded-lg px-4 py-2 transition-all duration-300">Dashboard</Link>
+            <Link href="/favorites" className="text-black hover:text-blue-500 rounded-lg px-4 py-2 transition-all duration-300">Favorites</Link>
+            <Link href="/category" className="text-black hover:text-blue-500 rounded-lg px-4 py-2 transition-all duration-300">Categories</Link>
             <button className="px-4 py-2 hover:bg-blue-500 rounded-lg" onClick={() => setDark(!dark)}>{dark ? "🌞" : "🌙"}</button>
             {isAuthenticated && (
               <button
                 onClick={logout}
-                className="text-black hover:bg-red-500 hover:text-white transition-all duration-200 px-4 py-2 rounded"
+                className="text-black hover:text-red-500 transition-all duration-200 px-4 py-2 rounded"
               >
                 Logout
               </button>
             )}
           </div>
+
+          <button
+            type="button"
+            className="md:hidden p-2 rounded hover:bg-gray-100"
+            aria-label="Toggle menu"
+            aria-controls="mobile-menu"
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((v) => !v)}
+          >
+            <Image src="/navbar-icon/burger-bar.png" alt="Menu" width={24} height={24} />
+          </button>
         </div>
       </div>
       
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-white shadow-md">
-            <Link href="/" className="text-white hover:text-blue-700">Dashboard</Link>
-            <Link href="/favorites" className="text-white hover:text-blue-700">Favorites</Link>
-            <Link href="/categories" className="text-white hover:text-blue-700">Categories</Link>
+        <div id="mobile-menu" className="md:hidden bg-white border-t shadow-sm transition-all duration-300">
+          <div className="px-4 py-3 flex flex-col">
+            <Link href="/" onClick={closeMenu} className="text-black hover:text-blue-700">Dashboard</Link>
+            <Link href="/favorites" onClick={closeMenu} className="text-black hover:text-blue-700">Favorites</Link>
+            <Link href="/category" onClick={closeMenu} className="text-black hover:text-blue-700">Categories</Link>
+            <button
+                onClick={() => { logout(); closeMenu(); }}
+                className="px-3 py-2 rounded hover:bg-red-50 text-red-600"
+              >
+                Logout
+            </button>
+          </div>
         </div>
       )}
     </nav>

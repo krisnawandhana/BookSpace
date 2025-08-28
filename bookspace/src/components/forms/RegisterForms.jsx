@@ -5,42 +5,53 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [values, setValues] = useState({ email: "", password: "", confirm: "" });
-  const [err, setErr] = useState("");
-  const [ok, setOk] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const validate = () => {
-    if (!values.email) return "Email wajib diisi";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return "Format email tidak valid";
-    if (!values.password) return "Password wajib diisi";
-    if (values.password.length < 6) return "Password minimal 6 karakter";
-    if (values.password !== values.confirm) return "Konfirmasi password tidak cocok";
-    return "";
+  const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "" });
+  const [errors, setErrors] = useState({ email: "", password: "", confirmPassword: "", general: "" });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = () => {
+    const nextErrors = { email: "", password: "", confirmPassword: "", general: "" };
+
+    if (!formData.email) nextErrors.email = "Email wajib diisi";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      nextErrors.email = "Format email tidak valid";
+
+    if (!formData.password) nextErrors.password = "Password wajib diisi";
+    else if (formData.password.length < 6) nextErrors.password = "Password minimal 6 karakter";
+
+    if (formData.password !== formData.confirmPassword)
+      nextErrors.confirmPassword = "Konfirmasi password tidak cocok";
+
+    setErrors(nextErrors);
+    return !nextErrors.email && !nextErrors.password && !nextErrors.confirmPassword;
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setErr(""); setOk("");
-    const v = validate();
-    if (v) return setErr(v);
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setErrors({ email: "", password: "", confirmPassword: "", general: "" });
+    setSuccessMessage("");
 
-    setLoading(true);
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
     try {
-      const res = await fetch("/api/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+        body: JSON.stringify({ email: formData.email, password: formData.password }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Registrasi gagal");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.message || "Registrasi gagal");
 
-      setOk("Registrasi sukses! Silakan login.");
+      setSuccessMessage("Registrasi sukses! Silakan login.");
       setTimeout(() => router.push("/login"), 800);
-    } catch (e2) {
-      setErr(e2.message);
+
+    } catch (err) {
+      setErrors((prev) => ({ ...prev, general: err.message }));
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -51,10 +62,15 @@ export default function RegisterForm() {
         <input
           type="email"
           className="w-full rounded border px-3 py-2 text-gray-700"
-          value={values.email}
-          onChange={(e) => setValues({ ...values, email: e.target.value })}
+          value={formData.email}
+          onChange={(event) => setFormData({ ...formData, email: event.target.value })}
           placeholder="Email"
         />
+        {errors.email && (
+          <p id="email-error" className="text-sm text-red-600 mt-1">
+            {errors.email}
+          </p>
+        )}
       </div>
 
       <div>
@@ -62,10 +78,15 @@ export default function RegisterForm() {
         <input
           type="password"
           className="w-full rounded border px-3 py-2 text-gray-700"
-          value={values.password}
-          onChange={(e) => setValues({ ...values, password: e.target.value })}
+          value={formData.password}
+          onChange={(event) => setFormData({ ...formData, password: event.target.value })}
           placeholder="Password"
         />
+        {errors.password && (
+          <p id="password-error" className="text-sm text-red-600 mt-1">
+            {errors.password}
+          </p>
+        )}
       </div>
 
       <div>
@@ -73,21 +94,33 @@ export default function RegisterForm() {
         <input
           type="password"
           className="w-full rounded border px-3 py-2 text-gray-700"
-          value={values.confirm}
-          onChange={(e) => setValues({ ...values, confirm: e.target.value })}
+          value={formData.confirmPassword}
+          onChange={(event) => setFormData({ ...formData, confirmPassword: event.target.value })}
           placeholder="Password"
         />
+        {errors.confirmPassword && (
+          <p id="confirm-password-error" className="text-sm text-red-600 mt-1">
+            {errors.confirmPassword}
+          </p>
+        )}
       </div>
 
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      {ok && <p className="text-sm text-green-600">{ok}</p>}
+      
+      {errors.general && (
+        <p className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {errors.general}
+        </p>
+      )}
+      {successMessage && (
+        <p className="text-sm text-green-600">{successMessage}</p>
+      )}
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={isSubmitting}
         className="w-full rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-60"
       >
-        {loading ? "Mendaftar..." : "Daftar"}
+        {isSubmitting ? "Mendaftar..." : "Daftar"}
       </button>
     </form>
   );
