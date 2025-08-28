@@ -5,36 +5,52 @@ import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function LoginForm() {
   const { login } = useAuth();
-  const [values, setValues] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState("");
-  const [loading, setLoading] = useState(false);
+  
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "", general: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const valid = () => {
-    if (!values.email) return "Email wajib diisi";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) return "Format email tidak valid";
-    if (!values.password) return "Password wajib diisi";
-    if (values.password.length < 6) return "Minimal 6 karakter";
-    return "";
+  const validateForm  = () => {
+    const nextErrors = { email: "", password: "", general: "" };
+
+    if (!formData.email) nextErrors.email = "Email wajib diisi";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      nextErrors.email = "Format email tidak valid";
+
+    if (!formData.password) nextErrors.password = "Password wajib diisi";
+    else if (formData.password.length < 6)
+      nextErrors.password = "Minimal 6 karakter";
+
+    setErrors(nextErrors);
+
+    return !nextErrors.email && !nextErrors.password;
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const v = valid();
-    if (v) return setErrors(v);
-    setErrors(""); setLoading(true);
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setErrors({ email: "", password: "", general: "" });
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    console.log("[LOGIN] sending request", formData);
+
     try {
-      const res = await fetch("/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Login gagal");
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.message || "Login gagal");
+
       login(data.user, data.token);
-    } catch (e2) {
-      setErrors((prev) => ({ ...prev, general: e2.message }));
+    } catch (errors) {
+      setErrors((prev) => ({ ...prev, general: errors.message }));
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -45,11 +61,15 @@ export default function LoginForm() {
         <input
           type="email"
           className="w-full rounded border px-3 py-2 outline-none focus:ring text-gray-700"
-          value={values.email}
-          onChange={(e) => setValues({ ...values, email: e.target.value })}
+          value={formData.email}
+          onChange={(event) => setFormData({ ...formData, email: event.target.value })}
           placeholder="Email"
         />
-        {errors.email ? <p className="text-sm text-red-600 mt-1">{errors.email}</p> : null}
+        {errors.email && (
+          <p id="email-error" className="text-sm text-red-600 mt-1">
+            {errors.email}
+          </p>
+        )}
       </div>
 
       <div>
@@ -57,25 +77,29 @@ export default function LoginForm() {
         <input
           type="password"
           className="w-full rounded border px-3 py-2 outline-none focus:ring text-gray-700"
-          value={values.password}
-          onChange={(e) => setValues({ ...values, password: e.target.value })}
+          value={formData.password}
+          onChange={(event) => setFormData({ ...formData, password: event.target.value })}
           placeholder="Password"
         />
-        {errors.password ? <p className="text-sm text-red-600 mt-1">{errors.password}</p> : null}
+        {errors.password && (
+          <p id="password-error" className="text-sm text-red-600 mt-1">
+            {errors.password}
+          </p>
+        )}
       </div>
 
-      {errors.general ? (
+      {errors.general && (
         <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {errors.general}
         </div>
-      ) : null}
+      )}
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={isSubmitting}
         className="w-full rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-60"
       >
-        {loading ? "Masuk..." : "Masuk"}
+        {isSubmitting ? "Masuk..." : "Masuk"}
       </button>
     </form>
   );
