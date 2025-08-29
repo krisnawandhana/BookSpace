@@ -40,7 +40,7 @@ export default function FavoritesPage() {
             Belum ada buku favorit. Tambahkan dari halaman Detail buku.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
             {items.map((b) => (
               <FavoriteCard key={b.id} book={b} onRemove={removeOne} />
             ))}
