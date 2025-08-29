@@ -2,8 +2,6 @@ import Navbar from "@/components/ui/NavBar";
 import { listCategories } from "@/lib/books";
 import Link from "next/link";
 
-export const metadata = { title: "Categories • BookSpace" };
-
 export default async function CategoriesPage() {
   const categories = listCategories();
 
