@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/ui/NavBar";
 import { addFavorite, removeFavorite, isFavorite } from "@/lib/favorites";
+import { findLocalBookById, isBookRemoved } from "@/lib/bookStorage";
 
 export default function BookDetailPage() {
   const { id } = useParams();
@@ -25,6 +26,19 @@ export default function BookDetailPage() {
     if (!ready || !id) return;
 
     let alive = true;
+
+    const local = findLocalBookById(id);
+      if (local) {
+        if (alive) setBook(local);
+        setLoading(false);
+        return;
+    }
+
+    if (isBookRemoved(id)) {
+        if (alive) { setNotFound(true); setLoading(false); }
+        return;
+    }
+
     (async () => {
       setLoading(true);
       setErr("");
